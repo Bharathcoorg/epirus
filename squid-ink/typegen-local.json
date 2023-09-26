@@ -1,6 +1,6 @@
 {
   "outDir": "src/chains/local/types",
-  "specVersions": "http://127.0.0.1:8888/graphql",
+  "specVersions": "http://38.242.128.236:8002/graphql",
   "events": [
     "Balances.Transfer",
     "Balances.Endowed",
