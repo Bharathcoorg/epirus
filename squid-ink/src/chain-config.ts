@@ -13,11 +13,11 @@ export interface ChainConfig {
 
 const chainConfig: Record<string, ChainConfig> = {
   local: {
-    name: "Local Contracts Chain",
-    ss58Format: 42,
+    name: "Edgeware Contracts",
+    ss58Format: 7,
     token: {
-      tokenDecimals: 12,
-      tokenSymbol: "Unit",
+      tokenDecimals: 18,
+      tokenSymbol: "EDG",
     },
   },
   rococo: {
