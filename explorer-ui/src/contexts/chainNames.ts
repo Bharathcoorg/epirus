@@ -20,7 +20,7 @@ const names = [
     endpoint: "watr"
   },
   {
-    chain: "local contracts chain",
+    chain: "Edgeware contracts",
     endpoint: "local"
   }
 ]
