@@ -11,9 +11,9 @@ const ormconfig = {
   logging: ["query", "error", "schema"],
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
-  database: process.env.DB_NAME || 'postgres',
-  username: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASS || 'postgres'
+  database: process.env.DB_NAME || 'squid_ink',
+  username: process.env.DB_USER || 'squid_ink',
+  password: process.env.DB_PASS || 'P4ssw0rd'
 }
 
 require('typeorm').createConnection(ormconfig).then(async con => {

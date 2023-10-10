@@ -5,37 +5,37 @@ import {Contract} from "./contract.model"
 
 @Entity_()
 export class ContractCode {
-  constructor(props?: Partial<ContractCode>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<ContractCode>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * Code Hash
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * Code Hash
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("bytea", {nullable: false})
-  code!: Uint8Array
+    @Column_("bytea", {nullable: false})
+    code!: Uint8Array
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: false})
-  owner!: Account
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    owner!: Account
 
-  @Column_("timestamp with time zone", {nullable: false})
-  createdAt!: Date
+    @Column_("timestamp with time zone", {nullable: false})
+    createdAt!: Date
 
-  @Index_()
-  @ManyToOne_(() => Extrinsic, {nullable: false})
-  createdFrom!: Extrinsic
+    @Index_()
+    @ManyToOne_(() => Extrinsic, {nullable: true})
+    createdFrom!: Extrinsic
 
-  @Column_("timestamp with time zone", {nullable: true})
-  removedAt!: Date | undefined | null
+    @Column_("timestamp with time zone", {nullable: true})
+    removedAt!: Date | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Extrinsic, {nullable: true})
-  removedFrom!: Extrinsic | undefined | null
+    @Index_()
+    @ManyToOne_(() => Extrinsic, {nullable: true})
+    removedFrom!: Extrinsic | undefined | null
 
-  @OneToMany_(() => Contract, e => e.contractCode)
-  contractsDeployed!: Contract[]
+    @OneToMany_(() => Contract, e => e.contractCode)
+    contractsDeployed!: Contract[]
 }

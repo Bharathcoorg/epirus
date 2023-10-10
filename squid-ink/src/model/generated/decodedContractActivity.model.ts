@@ -4,22 +4,22 @@ import {DecodedActivityArg} from "./decodedActivityArg.model"
 
 @Entity_()
 export class DecodedContractActivity {
-  constructor(props?: Partial<DecodedContractActivity>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<DecodedContractActivity>) {
+        Object.assign(this, props)
+    }
 
-  @PrimaryColumn_()
-  id!: string
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @Column_("text", {nullable: false})
-  name!: string
+    @Index_()
+    @Column_("text", {nullable: false})
+    name!: string
 
-  @Index_({unique: true})
-  @OneToOne_(() => Activity, {nullable: false})
-  @JoinColumn_()
-  activity!: Activity
+    @Index_({unique: true})
+    @OneToOne_(() => Activity, {nullable: false})
+    @JoinColumn_()
+    activity!: Activity
 
-  @OneToMany_(() => DecodedActivityArg, e => e.decodedActivity)
-  args!: DecodedActivityArg[]
+    @OneToMany_(() => DecodedActivityArg, e => e.decodedActivity)
+    args!: DecodedActivityArg[]
 }

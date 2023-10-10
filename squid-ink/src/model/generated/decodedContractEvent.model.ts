@@ -4,22 +4,22 @@ import {DecodedEventArg} from "./decodedEventArg.model"
 
 @Entity_()
 export class DecodedContractEvent {
-  constructor(props?: Partial<DecodedContractEvent>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<DecodedContractEvent>) {
+        Object.assign(this, props)
+    }
 
-  @PrimaryColumn_()
-  id!: string
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @Column_("text", {nullable: false})
-  name!: string
+    @Index_()
+    @Column_("text", {nullable: false})
+    name!: string
 
-  @Index_({unique: true})
-  @OneToOne_(() => ContractEvent, {nullable: false})
-  @JoinColumn_()
-  contractEvent!: ContractEvent
+    @Index_({unique: true})
+    @OneToOne_(() => ContractEvent, {nullable: false})
+    @JoinColumn_()
+    contractEvent!: ContractEvent
 
-  @OneToMany_(() => DecodedEventArg, e => e.decodedEvent)
-  args!: DecodedEventArg[]
+    @OneToMany_(() => DecodedEventArg, e => e.decodedEvent)
+    args!: DecodedEventArg[]
 }

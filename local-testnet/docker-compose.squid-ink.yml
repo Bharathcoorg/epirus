@@ -7,10 +7,10 @@ x-environment: &envs
   DB_HOST: squid-db
   DB_PASS: postgres
   DB_PORT: 5432
-  PROCESSOR_PROMETHEUS_PORT: 3000
-  GQL_PORT: 4000
-  ARCHIVE_ENDPOINT: http://38.242.128.236:8002/graphql
-  WS_ENDPOINT: wss://edgeware.jelliedowl.net  
+  PROCESSOR_PROMETHEUS_PORT: 5000
+  GQL_PORT: 5555
+  ARCHIVE_ENDPOINT: http://host.docker.internal:8001/graphql
+  WS_ENDPOINT: wss://edgeware.jelliedowl.net
   BALANCES_STORE: system
   SOURCE_CODE_ENABLED: "true"
   VERIFIER_ENDPOINT: http://host.docker.internal:3001
@@ -26,7 +26,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: squid-db
     ports:
-      - "5433:5432"
+      - "5432"
 
 
   processor:
@@ -34,7 +34,7 @@ services:
     image: ghcr.io/web3labs/squid-ink-epirus
     restart: on-failure
     environment: *envs
-    command: sh -c "(npx sqd db create-migration Init && npx sqd db migrate); sleep 5 && npm run processor:start"
+    command: sh -c "(npx sqd up && npx sqd migration:generate); sleep 5 && npm run processor:start"
     depends_on:
       - squid-db
     extra_hosts:
@@ -46,7 +46,7 @@ services:
     restart: on-failure
     environment: *envs
     ports:
-      - "4000:4000"
+      - "5555"
     depends_on:
       - processor
 

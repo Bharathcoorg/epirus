@@ -2,16 +2,16 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} f
 
 @Entity_()
 export class Token {
-  constructor(props?: Partial<Token>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<Token>) {
+        Object.assign(this, props)
+    }
 
-  @PrimaryColumn_()
-  id!: string
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("int4", {nullable: false})
-  tokenDecimals!: number
+    @Column_("int4", {nullable: false})
+    tokenDecimals!: number
 
-  @Column_("text", {nullable: false})
-  tokenSymbol!: string
+    @Column_("text", {nullable: false})
+    tokenSymbol!: string
 }

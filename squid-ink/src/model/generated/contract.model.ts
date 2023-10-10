@@ -8,57 +8,57 @@ import {CodeHashChange} from "./codeHashChange.model"
 
 @Entity_()
 export class Contract {
-  constructor(props?: Partial<Contract>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<Contract>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * Contract address
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * Contract address
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("bytea", {nullable: false})
-  trieId!: Uint8Array
+    @Column_("bytea", {nullable: false})
+    trieId!: Uint8Array
 
-  @Index_({unique: true})
-  @OneToOne_(() => Account, {nullable: false})
-  @JoinColumn_()
-  account!: Account
+    @Index_({unique: true})
+    @OneToOne_(() => Account, {nullable: false})
+    @JoinColumn_()
+    account!: Account
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: false})
-  deployer!: Account
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    deployer!: Account
 
-  @Index_()
-  @ManyToOne_(() => ContractCode, {nullable: false})
-  contractCode!: ContractCode
+    @Index_()
+    @ManyToOne_(() => ContractCode, {nullable: true})
+    contractCode!: ContractCode
 
-  @Index_()
-  @Column_("timestamp with time zone", {nullable: false})
-  createdAt!: Date
+    @Index_()
+    @Column_("timestamp with time zone", {nullable: false})
+    createdAt!: Date
 
-  @Column_("timestamp with time zone", {nullable: true})
-  terminatedAt!: Date | undefined | null
+    @Column_("timestamp with time zone", {nullable: true})
+    terminatedAt!: Date | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Extrinsic, {nullable: true})
-  terminatedFrom!: Extrinsic | undefined | null
+    @Index_()
+    @ManyToOne_(() => Extrinsic, {nullable: true})
+    terminatedFrom!: Extrinsic | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  terminationBeneficiary!: Account | undefined | null
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    terminationBeneficiary!: Account | undefined | null
 
-  @Column_("text", {nullable: true})
-  salt!: string | undefined | null
+    @Column_("text", {nullable: true})
+    salt!: string | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Extrinsic, {nullable: false})
-  createdFrom!: Extrinsic
+    @Index_()
+    @ManyToOne_(() => Extrinsic, {nullable: true})
+    createdFrom!: Extrinsic
 
-  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new StorageInfo(undefined, marshal.nonNull(obj))}, nullable: false})
-  storageInfo!: StorageInfo
+    @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => obj == null ? undefined : new StorageInfo(undefined, obj)}, nullable: false})
+    storageInfo!: StorageInfo
 
-  @OneToMany_(() => CodeHashChange, e => e.contract)
-  codeHashChanges!: CodeHashChange[]
+    @OneToMany_(() => CodeHashChange, e => e.contract)
+    codeHashChanges!: CodeHashChange[]
 }

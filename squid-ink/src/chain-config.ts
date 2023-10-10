@@ -20,6 +20,14 @@ const chainConfig: Record<string, ChainConfig> = {
       tokenSymbol: "EDG",
     },
   },
+  edgeware: {
+    name: "Edgeware Contracts",
+    ss58Format: 7,
+    token: {
+      tokenDecimals: 18,
+      tokenSymbol: "EDG",
+    },
+  },
   rococo: {
     name: "Contracts on Rococo",
     ss58Format: 42,
