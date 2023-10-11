@@ -8,9 +8,8 @@ import * as v45 from "../types/v45";
 export class NormalisedContractsCallCall extends ContractsCallCall {
   resolve(): ResolvedContractsCallCall {
     if (this.isV20) {
-      const { dest, value, gasLimit, storageDepositLimit, data } = this
-        .asV20 as {
-        dest: MultiAddress;
+      const { dest, value, gasLimit, storageDepositLimit, data } = this.asV20 as {
+        dest: MultiAddress,
         value: bigint;
         gasLimit: bigint;
         storageDepositLimit: bigint | undefined;
@@ -31,9 +30,8 @@ export class NormalisedContractsCallCall extends ContractsCallCall {
       };
     }
     if (this.isV45) {
-      const { dest, value, gasLimit, storageDepositLimit, data } = this
-        .asV45 as {
-        dest: v45.MultiAddress;
+      const { dest, value, gasLimit, storageDepositLimit, data } = this.asV45 as {
+        dest: v45.MultiAddress,
         value: bigint;
         gasLimit: v45.Weight;
         storageDepositLimit: bigint | undefined;

@@ -1,7 +1,7 @@
 {
   "typesBundle": "edgewareTypesBundle.json",
   "outDir": "src/chains/edgeware/types",
-  "specVersions": "http://localhost:8001/graphql",
+  "specVersions": "http://185.197.250.193:8001/graphql",
   "events": [
     "Balances.Transfer",
     "Balances.Endowed",

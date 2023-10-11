@@ -11,7 +11,7 @@ const config = {
     // Lookup archive by the network name in the Subsquid registry
     // archive: lookupArchive("shibuya", { release: "FireSquid" }),
     archive:
-      process.env.ARCHIVE_ENDPOINT || "http://127.0.0.1:8002/graphql",
+      process.env.ARCHIVE_ENDPOINT || "http://127.0.0.1:8001/graphql",
   },
   sourceCodeEnabled: (process.env.SOURCE_CODE_ENABLED || "false") === "true",
   verifierEndpoint: process.env.VERIFIER_ENDPOINT || "http://127.0.0.1:3001",

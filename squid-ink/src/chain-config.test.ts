@@ -21,9 +21,9 @@ describe("ChainPropertiesStore", () => {
     });
     const expectedChainPropertiesEntity = new ChainProperties({
       id: "chain_properties",
-      name: "Local Contracts Chain",
+      name: "Edgeware Contracts",
       token: expectedTokenEntity,
-      ss58Format: 42,
+      ss58Format: 7,
     });
 
     await chainPropertiesStore.save(ctx);

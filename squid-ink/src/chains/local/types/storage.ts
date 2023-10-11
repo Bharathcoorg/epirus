@@ -1,133 +1,153 @@
 import assert from 'assert'
-import {Block, BlockContext, Chain, ChainContext, Option, Result, StorageBase} from './support'
-import * as v31 from './v31'
-import * as v38 from './v38'
-import * as v53 from './v53'
+import {Block, Chain, ChainContext, BlockContext, Result, Option} from './support'
+import * as v100 from './v100'
 
-export class BalancesAccountStorage extends StorageBase {
-    protected getPrefix() {
-        return 'Balances'
-    }
+export class BalancesAccountStorage {
+    private readonly _chain: Chain
+    private readonly blockHash: string
 
-    protected getName() {
-        return 'Account'
+    constructor(ctx: BlockContext)
+    constructor(ctx: ChainContext, block: Block)
+    constructor(ctx: BlockContext, block?: Block) {
+        block = block || ctx.block
+        this.blockHash = block.hash
+        this._chain = ctx._chain
     }
 
     /**
-     *  The balance of an account.
+     *  The Balances pallet example of storing the balance of an account.
      * 
-     *  NOTE: THIS MAY NEVER BE IN EXISTENCE AND YET HAVE A `total().is_zero()`. If the total
-     *  is ever zero, then the entry *MUST* be removed.
-     */
-    get isV31(): boolean {
-        return this.getTypeHash() === '0b3b4bf0dd7388459eba461bc7c3226bf58608c941710a714e02f33ec0f91e78'
-    }
-
-    /**
-     *  The balance of an account.
+     *  # Example
      * 
-     *  NOTE: THIS MAY NEVER BE IN EXISTENCE AND YET HAVE A `total().is_zero()`. If the total
-     *  is ever zero, then the entry *MUST* be removed.
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
      */
-    get asV31(): BalancesAccountStorageV31 {
-        assert(this.isV31)
-        return this as any
+    get isV100() {
+        return this._chain.getStorageItemTypeHash('Balances', 'Account') === '0b3b4bf0dd7388459eba461bc7c3226bf58608c941710a714e02f33ec0f91e78'
+    }
+
+    /**
+     *  The Balances pallet example of storing the balance of an account.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
+     */
+    async getAsV100(key: Uint8Array): Promise<v100.AccountData> {
+        assert(this.isV100)
+        return this._chain.getStorage(this.blockHash, 'Balances', 'Account', key)
+    }
+
+    async getManyAsV100(keys: Uint8Array[]): Promise<(v100.AccountData)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'Balances', 'Account', keys.map(k => [k]))
+    }
+
+    async getAllAsV100(): Promise<(v100.AccountData)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'Balances', 'Account')
+    }
+
+    /**
+     * Checks whether the storage item is defined for the current chain version.
+     */
+    get isExists(): boolean {
+        return this._chain.getStorageItemTypeHash('Balances', 'Account') != null
     }
 }
 
-/**
- *  The balance of an account.
- * 
- *  NOTE: THIS MAY NEVER BE IN EXISTENCE AND YET HAVE A `total().is_zero()`. If the total
- *  is ever zero, then the entry *MUST* be removed.
- */
-export interface BalancesAccountStorageV31 {
-    get(key: Uint8Array): Promise<v31.AccountData>
-    getAll(): Promise<v31.AccountData[]>
-    getMany(keys: Uint8Array[]): Promise<v31.AccountData[]>
-}
+export class ContractsCodeStorageStorage {
+    private readonly _chain: Chain
+    private readonly blockHash: string
 
-export class ContractsCodeStorageStorage extends StorageBase {
-    protected getPrefix() {
-        return 'Contracts'
-    }
-
-    protected getName() {
-        return 'CodeStorage'
+    constructor(ctx: BlockContext)
+    constructor(ctx: ChainContext, block: Block)
+    constructor(ctx: BlockContext, block?: Block) {
+        block = block || ctx.block
+        this.blockHash = block.hash
+        this._chain = ctx._chain
     }
 
     /**
      *  A mapping between an original code hash and instrumented wasm code, ready for execution.
      */
-    get isV38(): boolean {
-        return this.getTypeHash() === '5dc755c41b6d54076cd2dd814924d60471cb6c06ff73ffc3a1e7a1562b00c121'
+    get isV100() {
+        return this._chain.getStorageItemTypeHash('Contracts', 'CodeStorage') === 'd90967ccfb2cbaf184f7d41bb1a330beaf15a192d25803d6352047090a9e635e'
     }
 
     /**
      *  A mapping between an original code hash and instrumented wasm code, ready for execution.
      */
-    get asV38(): ContractsCodeStorageStorageV38 {
-        assert(this.isV38)
-        return this as any
+    async getAsV100(key: Uint8Array): Promise<v100.PrefabWasmModule | undefined> {
+        assert(this.isV100)
+        return this._chain.getStorage(this.blockHash, 'Contracts', 'CodeStorage', key)
+    }
+
+    async getManyAsV100(keys: Uint8Array[]): Promise<(v100.PrefabWasmModule | undefined)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'Contracts', 'CodeStorage', keys.map(k => [k]))
+    }
+
+    async getAllAsV100(): Promise<(v100.PrefabWasmModule)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'Contracts', 'CodeStorage')
     }
 
     /**
-     *  A mapping between an original code hash and instrumented wasm code, ready for execution.
+     * Checks whether the storage item is defined for the current chain version.
      */
-    get isV53(): boolean {
-        return this.getTypeHash() === '1d41f869264eec7411828c1a845cdbad1a39455691f254f6bfead6b3102145ab'
-    }
-
-    /**
-     *  A mapping between an original code hash and instrumented wasm code, ready for execution.
-     */
-    get asV53(): ContractsCodeStorageStorageV53 {
-        assert(this.isV53)
-        return this as any
+    get isExists(): boolean {
+        return this._chain.getStorageItemTypeHash('Contracts', 'CodeStorage') != null
     }
 }
 
-/**
- *  A mapping between an original code hash and instrumented wasm code, ready for execution.
- */
-export interface ContractsCodeStorageStorageV38 {
-    get(key: Uint8Array): Promise<(v38.PrefabWasmModule | undefined)>
-    getAll(): Promise<v38.PrefabWasmModule[]>
-    getMany(keys: Uint8Array[]): Promise<(v38.PrefabWasmModule | undefined)[]>
-    getKeys(): Promise<Uint8Array[]>
-    getKeys(key: Uint8Array): Promise<Uint8Array[]>
-    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
-    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
-    getPairs(): Promise<[k: Uint8Array, v: v38.PrefabWasmModule][]>
-    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v38.PrefabWasmModule][]>
-    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v38.PrefabWasmModule][]>
-    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v38.PrefabWasmModule][]>
-}
+export class ContractsContractInfoOfStorage {
+    private readonly _chain: Chain
+    private readonly blockHash: string
 
-/**
- *  A mapping between an original code hash and instrumented wasm code, ready for execution.
- */
-export interface ContractsCodeStorageStorageV53 {
-    get(key: Uint8Array): Promise<(v53.PrefabWasmModule | undefined)>
-    getAll(): Promise<v53.PrefabWasmModule[]>
-    getMany(keys: Uint8Array[]): Promise<(v53.PrefabWasmModule | undefined)[]>
-    getKeys(): Promise<Uint8Array[]>
-    getKeys(key: Uint8Array): Promise<Uint8Array[]>
-    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
-    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
-    getPairs(): Promise<[k: Uint8Array, v: v53.PrefabWasmModule][]>
-    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v53.PrefabWasmModule][]>
-    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v53.PrefabWasmModule][]>
-    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v53.PrefabWasmModule][]>
-}
-
-export class ContractsContractInfoOfStorage extends StorageBase {
-    protected getPrefix() {
-        return 'Contracts'
-    }
-
-    protected getName() {
-        return 'ContractInfoOf'
+    constructor(ctx: BlockContext)
+    constructor(ctx: ChainContext, block: Block)
+    constructor(ctx: BlockContext, block?: Block) {
+        block = block || ctx.block
+        this.blockHash = block.hash
+        this._chain = ctx._chain
     }
 
     /**
@@ -135,8 +155,8 @@ export class ContractsContractInfoOfStorage extends StorageBase {
      * 
      *  TWOX-NOTE: SAFE since `AccountId` is a secure hash.
      */
-    get isV38(): boolean {
-        return this.getTypeHash() === '6b0433f17edee496fd43b3c7afcbb7891c2e518f9bb14ebca03255bd363f58e3'
+    get isV100() {
+        return this._chain.getStorageItemTypeHash('Contracts', 'ContractInfoOf') === 'b19f56551b6001070487b6e33ba3a88bf2e7a48df38a8c979b2d69856127de63'
     }
 
     /**
@@ -144,181 +164,115 @@ export class ContractsContractInfoOfStorage extends StorageBase {
      * 
      *  TWOX-NOTE: SAFE since `AccountId` is a secure hash.
      */
-    get asV38(): ContractsContractInfoOfStorageV38 {
-        assert(this.isV38)
-        return this as any
+    async getAsV100(key: Uint8Array): Promise<v100.ContractInfo | undefined> {
+        assert(this.isV100)
+        return this._chain.getStorage(this.blockHash, 'Contracts', 'ContractInfoOf', key)
+    }
+
+    async getManyAsV100(keys: Uint8Array[]): Promise<(v100.ContractInfo | undefined)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'Contracts', 'ContractInfoOf', keys.map(k => [k]))
+    }
+
+    async getAllAsV100(): Promise<(v100.ContractInfo)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'Contracts', 'ContractInfoOf')
     }
 
     /**
-     *  The code associated with a given account.
-     * 
-     *  TWOX-NOTE: SAFE since `AccountId` is a secure hash.
+     * Checks whether the storage item is defined for the current chain version.
      */
-    get isV53(): boolean {
-        return this.getTypeHash() === 'ca1ad2ae4b550883411d45c2158af4f3e2a0bde306e44674a586527ce222bcf3'
-    }
-
-    /**
-     *  The code associated with a given account.
-     * 
-     *  TWOX-NOTE: SAFE since `AccountId` is a secure hash.
-     */
-    get asV53(): ContractsContractInfoOfStorageV53 {
-        assert(this.isV53)
-        return this as any
+    get isExists(): boolean {
+        return this._chain.getStorageItemTypeHash('Contracts', 'ContractInfoOf') != null
     }
 }
 
-/**
- *  The code associated with a given account.
- * 
- *  TWOX-NOTE: SAFE since `AccountId` is a secure hash.
- */
-export interface ContractsContractInfoOfStorageV38 {
-    get(key: Uint8Array): Promise<(v38.ContractInfo | undefined)>
-    getAll(): Promise<v38.ContractInfo[]>
-    getMany(keys: Uint8Array[]): Promise<(v38.ContractInfo | undefined)[]>
-    getKeys(): Promise<Uint8Array[]>
-    getKeys(key: Uint8Array): Promise<Uint8Array[]>
-    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
-    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
-    getPairs(): Promise<[k: Uint8Array, v: v38.ContractInfo][]>
-    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v38.ContractInfo][]>
-    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v38.ContractInfo][]>
-    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v38.ContractInfo][]>
-}
+export class ContractsOwnerInfoOfStorage {
+    private readonly _chain: Chain
+    private readonly blockHash: string
 
-/**
- *  The code associated with a given account.
- * 
- *  TWOX-NOTE: SAFE since `AccountId` is a secure hash.
- */
-export interface ContractsContractInfoOfStorageV53 {
-    get(key: Uint8Array): Promise<(v53.RawContractInfo | undefined)>
-    getAll(): Promise<v53.RawContractInfo[]>
-    getMany(keys: Uint8Array[]): Promise<(v53.RawContractInfo | undefined)[]>
-    getKeys(): Promise<Uint8Array[]>
-    getKeys(key: Uint8Array): Promise<Uint8Array[]>
-    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
-    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
-    getPairs(): Promise<[k: Uint8Array, v: v53.RawContractInfo][]>
-    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v53.RawContractInfo][]>
-    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v53.RawContractInfo][]>
-    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v53.RawContractInfo][]>
-}
-
-export class ContractsOwnerInfoOfStorage extends StorageBase {
-    protected getPrefix() {
-        return 'Contracts'
-    }
-
-    protected getName() {
-        return 'OwnerInfoOf'
+    constructor(ctx: BlockContext)
+    constructor(ctx: ChainContext, block: Block)
+    constructor(ctx: BlockContext, block?: Block) {
+        block = block || ctx.block
+        this.blockHash = block.hash
+        this._chain = ctx._chain
     }
 
     /**
      *  A mapping between an original code hash and its owner information.
      */
-    get isV53(): boolean {
-        return this.getTypeHash() === '76689686c73821ee740f33d092a38a05de83a2833f6c8857baa886203c5bf939'
+    get isV100() {
+        return this._chain.getStorageItemTypeHash('Contracts', 'OwnerInfoOf') === '76689686c73821ee740f33d092a38a05de83a2833f6c8857baa886203c5bf939'
     }
 
     /**
      *  A mapping between an original code hash and its owner information.
      */
-    get asV53(): ContractsOwnerInfoOfStorageV53 {
-        assert(this.isV53)
-        return this as any
+    async getAsV100(key: Uint8Array): Promise<v100.OwnerInfo | undefined> {
+        assert(this.isV100)
+        return this._chain.getStorage(this.blockHash, 'Contracts', 'OwnerInfoOf', key)
+    }
+
+    async getManyAsV100(keys: Uint8Array[]): Promise<(v100.OwnerInfo | undefined)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'Contracts', 'OwnerInfoOf', keys.map(k => [k]))
+    }
+
+    async getAllAsV100(): Promise<(v100.OwnerInfo)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'Contracts', 'OwnerInfoOf')
+    }
+
+    /**
+     * Checks whether the storage item is defined for the current chain version.
+     */
+    get isExists(): boolean {
+        return this._chain.getStorageItemTypeHash('Contracts', 'OwnerInfoOf') != null
     }
 }
 
-/**
- *  A mapping between an original code hash and its owner information.
- */
-export interface ContractsOwnerInfoOfStorageV53 {
-    get(key: Uint8Array): Promise<(v53.OwnerInfo | undefined)>
-    getAll(): Promise<v53.OwnerInfo[]>
-    getMany(keys: Uint8Array[]): Promise<(v53.OwnerInfo | undefined)[]>
-    getKeys(): Promise<Uint8Array[]>
-    getKeys(key: Uint8Array): Promise<Uint8Array[]>
-    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
-    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
-    getPairs(): Promise<[k: Uint8Array, v: v53.OwnerInfo][]>
-    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v53.OwnerInfo][]>
-    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v53.OwnerInfo][]>
-    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v53.OwnerInfo][]>
-}
+export class SystemAccountStorage {
+    private readonly _chain: Chain
+    private readonly blockHash: string
 
-export class SystemAccountStorage extends StorageBase {
-    protected getPrefix() {
-        return 'System'
-    }
-
-    protected getName() {
-        return 'Account'
+    constructor(ctx: BlockContext)
+    constructor(ctx: ChainContext, block: Block)
+    constructor(ctx: BlockContext, block?: Block) {
+        block = block || ctx.block
+        this.blockHash = block.hash
+        this._chain = ctx._chain
     }
 
     /**
      *  The full account information for a particular account ID.
      */
-    get isV38(): boolean {
-        return this.getTypeHash() === 'eb40f1d91f26d72e29c60e034d53a72b9b529014c7e108f422d8ad5f03f0c902'
+    get isV100() {
+        return this._chain.getStorageItemTypeHash('System', 'Account') === '1ddc7ade926221442c388ee4405a71c9428e548fab037445aaf4b3a78f4735c1'
     }
 
     /**
      *  The full account information for a particular account ID.
      */
-    get asV38(): SystemAccountStorageV38 {
-        assert(this.isV38)
-        return this as any
+    async getAsV100(key: Uint8Array): Promise<v100.AccountInfo> {
+        assert(this.isV100)
+        return this._chain.getStorage(this.blockHash, 'System', 'Account', key)
+    }
+
+    async getManyAsV100(keys: Uint8Array[]): Promise<(v100.AccountInfo)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'System', 'Account', keys.map(k => [k]))
+    }
+
+    async getAllAsV100(): Promise<(v100.AccountInfo)[]> {
+        assert(this.isV100)
+        return this._chain.queryStorage(this.blockHash, 'System', 'Account')
     }
 
     /**
-     *  The full account information for a particular account ID.
+     * Checks whether the storage item is defined for the current chain version.
      */
-    get isV53(): boolean {
-        return this.getTypeHash() === '1ddc7ade926221442c388ee4405a71c9428e548fab037445aaf4b3a78f4735c1'
+    get isExists(): boolean {
+        return this._chain.getStorageItemTypeHash('System', 'Account') != null
     }
-
-    /**
-     *  The full account information for a particular account ID.
-     */
-    get asV53(): SystemAccountStorageV53 {
-        assert(this.isV53)
-        return this as any
-    }
-}
-
-/**
- *  The full account information for a particular account ID.
- */
-export interface SystemAccountStorageV38 {
-    get(key: Uint8Array): Promise<v38.AccountInfo>
-    getAll(): Promise<v38.AccountInfo[]>
-    getMany(keys: Uint8Array[]): Promise<v38.AccountInfo[]>
-    getKeys(): Promise<Uint8Array[]>
-    getKeys(key: Uint8Array): Promise<Uint8Array[]>
-    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
-    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
-    getPairs(): Promise<[k: Uint8Array, v: v38.AccountInfo][]>
-    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v38.AccountInfo][]>
-    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v38.AccountInfo][]>
-    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v38.AccountInfo][]>
-}
-
-/**
- *  The full account information for a particular account ID.
- */
-export interface SystemAccountStorageV53 {
-    get(key: Uint8Array): Promise<v53.AccountInfo>
-    getAll(): Promise<v53.AccountInfo[]>
-    getMany(keys: Uint8Array[]): Promise<v53.AccountInfo[]>
-    getKeys(): Promise<Uint8Array[]>
-    getKeys(key: Uint8Array): Promise<Uint8Array[]>
-    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
-    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
-    getPairs(): Promise<[k: Uint8Array, v: v53.AccountInfo][]>
-    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v53.AccountInfo][]>
-    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v53.AccountInfo][]>
-    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v53.AccountInfo][]>
 }

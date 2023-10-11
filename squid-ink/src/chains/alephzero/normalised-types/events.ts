@@ -32,13 +32,13 @@ import {
 
 export class NormalisedBalancesTransferEvent extends BalancesTransferEvent {
   resolve(): ResolvedBalancesTransferEvent {
-    if (this.isV12) {
+    if(this.isV12) {
       const { from, to, amount } = this.asV12;
       return {
-        from: ss58.codec(ss58Format).encode(from),
+        from: ss58.codec(ss58Format).encode(from), 
         to: ss58.codec(ss58Format).encode(to),
-        amount,
-      };
+        amount
+      }
     }
     throw new Error(
       "No runtime version found while decoding [BalancesTransferEvent]"
@@ -48,7 +48,7 @@ export class NormalisedBalancesTransferEvent extends BalancesTransferEvent {
 
 export class NormalisedBalancesEndowedEvent extends BalancesEndowedEvent {
   resolve(): ResolvedBalancesEndowedEvent {
-    if (this.isV12) {
+    if(this.isV12) {
       const { account, freeBalance } = this.asV12;
       return {
         account: ss58.codec(ss58Format).encode(account),
